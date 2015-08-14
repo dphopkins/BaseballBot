@@ -158,13 +158,15 @@ now = datetime.now()
 baseball_data = requests.get(date_url("today")).json()
 game_array = baseball_data['data']['games']['game']
 
+hideKeyboard = types.ReplyKeyboardHide() # if sent as reply_markup, will hide the keyboard
+
 # Handle '/start' and '/help'
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.reply_to(message, """\
 Hi there, I am BaseballBot!
 Use /all to see all of today's games or request the score of today's game for a specific team by typing in the city, team name, or abbreviation.\
-""")
+""", reply_markup=hideKeyboard)
 
 # Handle '/all'
 @bot.message_handler(commands=['all'])
@@ -172,10 +174,10 @@ def respond(message):
     chat_id = message.chat.id
     response = ""
     for game in game_array:
-        disp = game_info(game)
-        if disp:
-            response = response + disp + "\n\n"
-    bot.send_message(chat_id, response) # currently sends one message per game
+        entry = game_info(game)
+        if entry:
+            response = response + entry + "\n\n"
+    bot.send_message(chat_id, response, reply_markup=hideKeyboard)
 
 # Handle '/division'
 @bot.message_handler(commands=['division'])
@@ -192,7 +194,7 @@ def respond(message):
     chat_id = message.chat.id
     txt = message.text.upper()
 
-    if txt in divisions: # TODO: use a loop instead
+    if txt in divisions:
         if txt == "AL WEST":
             al_west_markup = types.ReplyKeyboardMarkup()
             al_west_markup.add('HOU', 'LAA', 'OAK', 'SEA', 'TEX')
@@ -221,30 +223,32 @@ def respond(message):
     elif txt in dictionary.keys():
         if txt in alts:
             if txt == "CHICAGO":
-                bot.reply_to(message, "Cubs or White Sox?")
+                bot.reply_to(message, "Cubs or White Sox?", reply_markup=hideKeyboard)
             elif txt == "LOS ANGELES":
-                bot.reply_to(message, "Angels or Dodgers?")
+                bot.reply_to(message, "Angels or Dodgers?", reply_markup=hideKeyboard)
             elif txt == "NEW YORK":
-                bot.reply_to(message, "Mets or Yankees?")
+                bot.reply_to(message, "Mets or Yankees?", reply_markup=hideKeyboard)
         else:
             response = dictionary.get(txt)
             found = False
             for game in game_array:
                 if (game['home_name_abbrev']) == response or (game['away_name_abbrev']) == response:
-                    disp = team_score(game)
-                    if disp:
-                        bot.send_message(chat_id, disp)
+                    entry = team_score(game)
+                    if entry:
+                        bot.send_message(chat_id, entry, reply_markup=hideKeyboard)
                     found = True
             if found == False:
-                bot.send_message(chat_id, "No games for that team today, sorry!")
+                bot.send_message(chat_id, "No games for that team today, sorry!", reply_markup=hideKeyboard)
     else:
-        bot.send_message(chat_id, "There was an error. Check your spelling and try again.")
+        bot.send_message(chat_id, "There was an error. Check your spelling and try again.", reply_markup=hideKeyboard)
 
 bot.polling()
 
 while True:
     pass
 
+
+################# COMMANDS #################
 # /all - see all of today's games
 # /division - search for a team by division
 # /help - get more info
