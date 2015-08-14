@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 import requests
 import json
 
-# uses python-baseball by fspinillo, casschin, and jonursenbach on GitHub: https://github.com/fspinillo/python-baseball
+# uses python-baseball by fspinillo to get scores: https://github.com/fspinillo/python-baseball
+# uses pyTelegramBotAPI by eternnoir as a python wrapper for the Telegram Bot API: https://github.com/eternnoir/pyTelegramBotAPI
 
 API_TOKEN = '59094683:AAG5mNV5wOSTFq8VjfdU0OlDETvuHMXdgBM'
 
