@@ -170,10 +170,12 @@ Use /all to see all of today's games or request the score of today's game for a 
 @bot.message_handler(commands=['all'])
 def respond(message):
     chat_id = message.chat.id
+    response = ""
     for game in game_array:
         disp = game_info(game)
         if disp:
-            bot.send_message(chat_id, disp) # currently sends one message per game
+            response = response + disp + "\n\n"
+    bot.send_message(chat_id, response) # currently sends one message per game
 
 # Handle '/division'
 @bot.message_handler(commands=['division'])
